@@ -32,7 +32,7 @@ struct shared_data {
 // Global pointers to shared memory
 struct shared_data *shared;
 int sem_id;
-int server_delay = 0; // Simulation delay in seconds
+
 
 // Semaphore operations
 void sem_lock() {
@@ -115,12 +115,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    // Check for Simulation Delay
-    char *delay_env = getenv("SERVER_DELAY");
-    if (delay_env) {
-        server_delay = atoi(delay_env);
-        printf("[TEST MODE] Server Response Delay set to %d seconds.\n", server_delay);
-    }
+
 
     printf("Server listening on port %d\n", PORT);
     printf("Initial tickets: %d\n", shared->total_tickets);
@@ -317,11 +312,7 @@ void handle_connection(int client_socket) {
         xor_cipher(&header, sizeof(ProtocolHeader));
         xor_cipher(&response, sizeof(ServerResponse));
 
-        // Simulate Delay if configured
-        if (server_delay > 0) {
-            printf("[TEST] Sleeping for %d seconds before response...\n", server_delay);
-            sleep(server_delay);
-        }
+
 
         write_n_bytes(client_socket, &header, sizeof(ProtocolHeader));
         write_n_bytes(client_socket, &response, sizeof(ServerResponse));
